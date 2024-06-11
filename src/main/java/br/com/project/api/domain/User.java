@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @Entity
+@Table(name = "\"users\"")
 public class User {
 
     @Id
