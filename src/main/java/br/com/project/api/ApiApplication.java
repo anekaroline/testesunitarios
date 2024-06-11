@@ -1,5 +1,6 @@
 package br.com.project.api;
 
+import br.com.project.api.domain.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
