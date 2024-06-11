@@ -10,5 +10,5 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public interface IUserAPI {
 
     @GetMapping("/{id}")
-    ResponseEntity<User> findById(@PathVariable Integer id);
+    ResponseEntity<User> findById(@PathVariable Long id);
 }
