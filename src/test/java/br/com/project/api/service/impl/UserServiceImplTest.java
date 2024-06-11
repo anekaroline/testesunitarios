@@ -2,6 +2,7 @@ package br.com.project.api.service.impl;
 
 import br.com.project.api.domain.User;
 import br.com.project.api.domain.dto.UserDTO;
+import br.com.project.api.exceptions.ObjectNotFountException;
 import br.com.project.api.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,16 @@ class UserServiceImplTest {
         assertEquals(SENHA, response.getSenha());
     }
 
+    @Test
+    void whenFindByIdThenReturnAnObjectNotFoundException() {
+        when(userRepository.findById(anyLong())).thenThrow(new ObjectNotFountException("Objeto não encontrado"));
+        try{
+            userService.findById(ID);
+        } catch (Exception ex){
+            assertEquals(ObjectNotFountException.class, ex.getClass());
+            assertEquals("Objeto não encontrado", ex.getMessage());
+        }
+    }
 
     @Test
     void findAll() {
