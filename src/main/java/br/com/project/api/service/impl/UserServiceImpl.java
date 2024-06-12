@@ -37,14 +37,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(UserDTO user) {
-        findByEmail(user);
+        findByEmail(null, user);
         return userRepository.save(mapper.map(user, User.class));
     }
 
     @Override
     public User update(Long id, UserDTO user){
         var userCadastrado = findById(id);
-        findByEmail(user);
+        findByEmail(id, user);
         BeanUtils.copyProperties(user, userCadastrado, "id");
         return userRepository.save(userCadastrado);
     }
@@ -57,9 +57,9 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    private void findByEmail(UserDTO user){
+    private void findByEmail(Long id, UserDTO user){
         Optional<User> email = userRepository.findByEmail(user.getEmail());
-        if(email.isPresent()){
+        if(email.isPresent() && email.get().getId().equals(id)){
             throw new DataIntegratyViolationException("E-mail já está associado a outro cadastro");
         }
     }

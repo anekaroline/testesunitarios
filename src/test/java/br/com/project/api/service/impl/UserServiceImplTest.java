@@ -11,11 +11,12 @@ import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -25,6 +26,8 @@ class UserServiceImplTest {
     public static final String NAME = "User";
     public static final String EMAIL = "XXXXXXXXXXXXXX";
     public static final String SENHA = "123";
+    public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
+    public static final int INDEX = 0;
     @InjectMocks
     private UserServiceImpl userService;
     @Mock
@@ -56,21 +59,43 @@ class UserServiceImplTest {
 
     @Test
     void whenFindByIdThenReturnAnObjectNotFoundException() {
-        when(userRepository.findById(anyLong())).thenThrow(new ObjectNotFountException("Objeto não encontrado"));
+        when(userRepository.findById(anyLong())).thenThrow(new ObjectNotFountException(OBJETO_NAO_ENCONTRADO));
         try{
             userService.findById(ID);
         } catch (Exception ex){
             assertEquals(ObjectNotFountException.class, ex.getClass());
-            assertEquals("Objeto não encontrado", ex.getMessage());
+            assertEquals(OBJETO_NAO_ENCONTRADO, ex.getMessage());
         }
     }
 
     @Test
-    void findAll() {
+    void whenFindAllThenRuturnAnUserInstance() {
+        when(userRepository.findAll()).thenReturn(List.of(user));
+        List<User> responseList = userService.findAll();
+
+        assertNotNull(responseList);
+        assertEquals(1, responseList.size());
+        assertEquals(User.class, responseList.get(INDEX).getClass());
+        assertEquals(ID, responseList.get(INDEX).getId());
+        assertEquals(NAME, responseList.get(INDEX).getName());
+        assertEquals(EMAIL, responseList.get(INDEX).getEmail());
+        assertEquals(SENHA, responseList.get(INDEX).getSenha());
+        assertEquals(user, responseList.get(INDEX));
     }
 
+
+
     @Test
-    void create() {
+    void whenCreateThenReturnSuccess() {
+        when(userRepository.save(any())).thenReturn(user);
+        var response = userService.create(userDTO);
+
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(SENHA, response.getSenha());
+        assertEquals(user, response);
     }
 
     @Test
