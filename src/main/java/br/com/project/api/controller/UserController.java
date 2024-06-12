@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController implements IUserAPI {
@@ -26,7 +27,7 @@ public class UserController implements IUserAPI {
 
     @Override
     public ResponseEntity<List<UserDTO>> findAll() {
-        return ResponseEntity.ok().body(service.findAll().stream().map(x -> mapper.map(x, UserDTO.class)).toList());
+        return ResponseEntity.ok().body(service.findAll().stream().map(x -> mapper.map(x, UserDTO.class)).collect(Collectors.toList()));
     }
 
     @Override

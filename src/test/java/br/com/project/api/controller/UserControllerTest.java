@@ -11,13 +11,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest
@@ -27,9 +28,7 @@ class UserControllerTest {
     public static final String NAME = "User";
     public static final String EMAIL = "XXXXXXXXXXXXXX";
     public static final String SENHA = "123";
-    public static final String OBJETO_NAO_ENCONTRADO = "Objeto não encontrado";
     public static final int INDEX = 0;
-    public static final String E_MAIL_STRING_EXCEPTION = "E-mail já está associado a outro cadastro";
 
     @InjectMocks
     private UserController controller;
@@ -51,7 +50,7 @@ class UserControllerTest {
     }
 
     @Test
-    void whenFindByIdThenRuturnAnUserInstance() {
+    void whenFindByIdThenReturnAnUserInstance() {
         when(service.findById(anyLong())).thenReturn(user);
         when(mapper.map(any(), any())).thenReturn(userDTO);
 
@@ -70,19 +69,68 @@ class UserControllerTest {
     }
 
     @Test
-    void findAll() {
+    void whenFindByAllThenReturnAnListUserInstance() {
+        when(service.findAll()).thenReturn(List.of(user));
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        var result = controller.findAll();
+
+        assertNotNull(result);
+        assertNotNull(result.getBody());
+        assertEquals(ResponseEntity.class, result.getClass());
+        assertEquals(200, result.getStatusCode().value());
+        assertEquals(ArrayList.class, result.getBody().getClass());
+        assertEquals(UserDTO.class, result.getBody().get(INDEX).getClass());
+        assertEquals(ID, result.getBody().get(INDEX).getId());
+        assertEquals(NAME, result.getBody().get(INDEX).getName());
+        assertEquals(EMAIL, result.getBody().get(INDEX).getEmail());
+        assertEquals(SENHA, result.getBody().get(INDEX).getSenha());
     }
 
     @Test
-    void create() {
+    void whenCreateThenReturnAnListUserInstance() {
+        when(service.create(any())).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        var result = controller.create(userDTO);
+        assertNotNull(result);
+        assertNotNull(result.getBody());
+        assertEquals(ResponseEntity.class, result.getClass());
+        assertEquals(201, result.getStatusCode().value());
+        assertEquals(UserDTO.class, result.getBody().getClass());
+        assertEquals(ID, result.getBody().getId());
+        assertEquals(NAME, result.getBody().getName());
+        assertEquals(EMAIL, result.getBody().getEmail());
+        assertEquals(SENHA, result.getBody().getSenha());
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnAnListUserInstance() {
+        when(service.update(anyLong(), any())).thenReturn(user);
+        when(mapper.map(any(), any())).thenReturn(userDTO);
+
+        var result = controller.update(ID, userDTO);
+        assertNotNull(result);
+        assertNotNull(result.getBody());
+        assertEquals(ResponseEntity.class, result.getClass());
+        assertEquals(200, result.getStatusCode().value());
+        assertEquals(UserDTO.class, result.getBody().getClass());
+        assertEquals(ID, result.getBody().getId());
+        assertEquals(NAME, result.getBody().getName());
+        assertEquals(EMAIL, result.getBody().getEmail());
+        assertEquals(SENHA, result.getBody().getSenha());
     }
 
     @Test
-    void delete() {
+    void whenDeleteThenReturnAnListUserInstance() {
+        doNothing().when(service).delete(anyLong());
+        var result = controller.delete(ID);
+
+        assertNotNull(result);
+        assertNull(result.getBody());
+        assertEquals(ResponseEntity.class, result.getClass());
+        assertEquals(204, result.getStatusCode().value());
+        verify(service, times(1)).delete(anyLong());
     }
 
     private void startUser(){
