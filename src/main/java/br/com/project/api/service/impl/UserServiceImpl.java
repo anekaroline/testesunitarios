@@ -2,7 +2,7 @@ package br.com.project.api.service.impl;
 
 import br.com.project.api.domain.User;
 import br.com.project.api.domain.dto.UserDTO;
-import br.com.project.api.exceptions.DataIntegratyViolationException;
+import br.com.project.api.exceptions.DataIntegrityViolationException;
 import br.com.project.api.exceptions.ObjectNotFountException;
 import br.com.project.api.repository.UserRepository;
 import br.com.project.api.service.api.UserService;
@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
 
     private void findByEmail(Long id, UserDTO user){
         Optional<User> email = userRepository.findByEmail(user.getEmail());
-        if(email.isPresent() && email.get().getId().equals(id)){
-            throw new DataIntegratyViolationException("E-mail já está associado a outro cadastro");
+        if(email.isPresent() && !email.get().getId().equals(id)){
+            throw new DataIntegrityViolationException("E-mail já está associado a outro cadastro");
         }
     }
 

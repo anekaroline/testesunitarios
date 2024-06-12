@@ -1,6 +1,6 @@
 package br.com.project.api.exceptions.handler;
 
-import br.com.project.api.exceptions.DataIntegratyViolationException;
+import br.com.project.api.exceptions.DataIntegrityViolationException;
 import br.com.project.api.exceptions.ObjectNotFountException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -19,8 +19,8 @@ public class ExceptionsHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(DataIntegratyViolationException.class)
-    public ResponseEntity<StandardError> dataIntegratyViolation(DataIntegratyViolationException ex, HttpServletRequest request){
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<StandardError> dataIntegratyViolation(DataIntegrityViolationException ex, HttpServletRequest request){
         StandardError error = new StandardError(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
